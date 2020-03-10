@@ -48,8 +48,7 @@ int main() {
     return 0;
 }
 
-/* lookup - a function to lookup operators and parentheses
-and return the token */
+/* lookup - a function to lookup operators and parentheses and return the token */
 int lookup(char ch) {
     switch (ch) {
         case '(':
@@ -112,17 +111,13 @@ void getChar() {
         charClass = EOF;
 }
 
-/* getNonBlank - a function to call getChar until it
-returns a non-
-whitespace
-character */
+/* getNonBlank - a function to call getChar until it returns a non-whitespace character */
 void getNonBlank() {
     while (isspace(nextChar))
     getChar();
 }
 
-/* lex - a simple lexical analyzer for arithmetic
-expressions */
+/* lex - a simple lexical analyzer for arithmetic expressions */
 int lex() {
     lexLen = 0;
     getNonBlank();
