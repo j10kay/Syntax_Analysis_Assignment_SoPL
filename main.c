@@ -46,6 +46,7 @@ int main() {
             stmt();
         } while (nextToken != EOF);
     }
+    printf("Successful parse!");
     return 0;
 }
 //printf("\n%d \n", nextToken);
@@ -231,7 +232,7 @@ void factor() {
     printf("Enter <factor>\n");
     /* Determine which RHS */
     if (nextToken == IDENT || nextToken == INT_LIT){
-        printf("Successful parse!\n");
+        ;
     }
 
     /* If the RHS is ( <expr>), call lex to pass over the
@@ -243,7 +244,6 @@ void factor() {
             expr();
             if (nextToken == RIGHT_PAREN){
                 lex();
-                printf("Successful parse!\n");
             }
             else
                 error();
