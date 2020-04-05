@@ -43,15 +43,7 @@ int main() {
         getChar();
         do {
             lex();
-            if (nextToken == IDENT) {
-                lex();
-                if (nextToken == ASSIGN_OP){
-                    lex();
-                    expr();
-                }
-                else error();
-            }
-            else error();
+            stmt();
         } while (nextToken != EOF);
     }
     return 0;
@@ -265,6 +257,6 @@ void factor() {
 } /* End of function factor */
 
 void error(){
-    printf("Unexpected value, Exit");
-    return;
+    printf("Error\n");
+    exit(0);
 }
