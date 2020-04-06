@@ -17,6 +17,11 @@ void addChar();
 void getChar();
 void getNonBlank();
 int lex();
+void stmt();
+void expr();
+void term();
+void factor();
+void error();
 
 /* Character classes */
 #define LETTER 0
@@ -88,6 +93,11 @@ int lookup(char ch) {
             nextToken = ASSIGN_OP;
             break;
 
+        case '\n':
+            addChar();
+            nextToken = EOF;
+            break;
+
         default:
             addChar();
             nextToken = EOF;
@@ -112,8 +122,6 @@ void getChar() {
             charClass = LETTER;
         else if (isdigit(nextChar))
             charClass = DIGIT;
-        else if (nextChar == "\n")
-            charClass = EOF;
         else charClass = UNKNOWN;
     }
     else
@@ -122,8 +130,21 @@ void getChar() {
 
 /* getNonBlank - a function to call getChar until it returns a non-whitespace character */
 void getNonBlank() {
-    while (isspace(nextChar))
-    getChar();
+    int new_line_count = 0;
+    while (isspace(nextChar)) {
+        getChar();
+        if (nextChar == '\n' && new_line_count == 0){
+            new_line_count = 1;
+            continue;
+        }
+        if (nextChar == '\n' && new_line_count == 1){
+            break;
+        }
+        if (nextChar != '\n'){
+            new_line_count = 0;
+        }
+    }
+    //getChar();
 }
 
 /* lex - a simple lexical analyzer for arithmetic expressions */
@@ -234,7 +255,7 @@ void factor() {
     printf("Enter <factor>\n");
     /* Determine which RHS */
     if (nextToken == IDENT || nextToken == INT_LIT){
-        ;
+        lex();
     }
 
     /* If the RHS is ( <expr>), call lex to pass over the
