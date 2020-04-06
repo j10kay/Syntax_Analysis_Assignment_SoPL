@@ -260,5 +260,9 @@ void factor() {
 
 void error(){
     printf("Error\n");
-    exit(0);
+    while (nextChar != '\n'){
+        getChar();
+    }
+    if (nextToken == EOF)
+        exit(0);
 }
