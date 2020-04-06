@@ -207,8 +207,13 @@ void stmt() {
         while (nextToken == ASSIGN_OP){
             lex();
             expr();
+            if (nextChar != '\n') error();
         }
     printf("Exit <stmt>\n");
+    }
+    else {
+        printf("Enter <stmt>\n");
+        error();
     }
 
 } /* End of function stmt */
@@ -258,11 +263,10 @@ void factor() {
         lex();
     }
 
-    /* If the RHS is ( <expr>), call lex to pass over the
+    /* If the RHS is (<expr>), call lex to pass over the
     left parenthesis, call expr, and check for the right
     parenthesis */
-    else {
-        if (nextToken == LEFT_PAREN) {
+    else if (nextToken == LEFT_PAREN) {
             lex();
             expr();
             if (nextToken == RIGHT_PAREN){
@@ -270,10 +274,10 @@ void factor() {
             }
             else
                 error();
-        } /* End of if (nextToken == ... */
+    } /* End of if (nextToken == ... */
         /* It was not an id, an integer literal, or a left
         parenthesis */
-        else
+    else {
             error();
     } /* End of else */
     printf("Exit <factor>\n");;
