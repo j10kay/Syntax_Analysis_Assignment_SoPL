@@ -27,6 +27,7 @@ void error();
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
+#define NEWLINE 2
 #define UNKNOWN 99
 
 /* Token codes */
@@ -93,11 +94,6 @@ int lookup(char ch) {
             nextToken = ASSIGN_OP;
             break;
 
-        case '\n':
-            addChar();
-            nextToken = EOF;
-            break;
-
         default:
             addChar();
             nextToken = EOF;
@@ -122,6 +118,8 @@ void getChar() {
             charClass = LETTER;
         else if (isdigit(nextChar))
             charClass = DIGIT;
+        else if (nextChar == '\n')
+            charClass = NEWLINE;
         else charClass = UNKNOWN;
     }
     else
