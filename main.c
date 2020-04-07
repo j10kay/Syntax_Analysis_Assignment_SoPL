@@ -33,6 +33,7 @@ void error();
 /* Token codes */
 #define INT_LIT 10
 #define IDENT 11
+#define NL 12
 #define ASSIGN_OP 20
 #define ADD_OP 21
 #define SUB_OP 22
@@ -174,6 +175,13 @@ int lex() {
             }
             nextToken = INT_LIT;
             break;
+
+        /* Parse new line character */
+        case NEWLINE:
+            getChar();
+            printf("Next token is: -1, Next lexeme is EOF\n");
+            nextToken = NL;
+            return nextToken;
 
         /* Parentheses and operators */
         case UNKNOWN:
