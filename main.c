@@ -219,7 +219,7 @@ void stmt() {
         else {
             lex();
             expr();
-            //if (nextChar != '\n') error();
+            //if (something) return;
         }
     }
     else {
@@ -238,11 +238,13 @@ void expr() {
     printf("Enter <expr>\n");
     /* Parse the first term */
     term();
+    // if (something) return;
     /* As long as the next token is + or -, get
     the next token and parse the next term */
-    while (nextToken == ADD_OP || nextToken == SUB_OP) {
+    while (nextToken == ADD_OP || nextToken == SUB_OP && charClass != NEWLINE) {
         lex();
         term();
+        // if (something) return;
     }
     printf("Exit <expr>\n");
 } /* End of function expr */
@@ -255,11 +257,13 @@ void term() {
     printf("Enter <term>\n");
     /* Parse the first factor */
     factor();
+    // if (something) return;
     /* As long as the next token is * or /, get the
     next token and parse the next factor */
-    while (nextToken == MULT_OP || nextToken == DIV_OP) {
+    while (nextToken == MULT_OP || nextToken == DIV_OP && charClass != NEWLINE) {
         lex();
         factor();
+        // if (something) return;
     }
     printf("Exit <term>\n");
 } /* End of function term */
@@ -283,28 +287,34 @@ void factor() {
         if (nextToken == LEFT_PAREN) {
             lex();
             expr();
+            // if (something) return;
             if (nextToken == RIGHT_PAREN){
                 lex();
             }
             else
                 error();
+                return;
         } /* End of if (nextToken == ... */
     /* It was not an id, an integer literal, or a left
     parenthesis */
         else {
             error();
+            return;
         } /* End of else */
     } /* End of function factor */
-    printf("Exit <factor>\n");;
+    printf("Exit <factor>\n");
 }
 
 void error(){
+    // set something
     printf("Error\n");
-    /*
-    while (nextChar != '\n'){
+    nextChar = getc(in_fp);
+    while ((nextChar != '\n') && (charClass != EOF)){
         getChar();
     }
-    */
-    if (nextToken == EOF)
-        exit(0);
+    if (charClass == EOF){
+        return;
+    }
+    getChar();
+    return;
 }
