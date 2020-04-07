@@ -7,6 +7,7 @@
 int charClass;
 char lexeme [100];
 char nextChar;
+int bool_start_over = 0;
 int lexLen;
 int token;
 int nextToken;
@@ -60,6 +61,7 @@ int main() {
                 if (nextToken == EOF) break;
                 stmt();
             }
+            bool_start_over = 0;
         } while (nextToken != EOF);
     }
     return 0;
@@ -143,8 +145,8 @@ void getNonBlank() {
 }
 
 void getNonBlankExcNl(){
-    while (isspace(nextChar)){
-        if (nextChar == '\n') break;
+    while (isspace(nextChar) && nextChar != '\n'){
+        //if (nextChar == '\n') break;
         getChar();
     }
 }
@@ -152,7 +154,7 @@ void getNonBlankExcNl(){
 /* lex - a simple lexical analyzer for arithmetic expressions */
 int lex() {
     lexLen = 0;
-    getNonBlank();
+    getNonBlankExcNl();
     switch (charClass) {
         /* Parse identifiers */
         case LETTER:
@@ -178,10 +180,11 @@ int lex() {
 
         /* Parse new line character */
         case NEWLINE:
+            nextToken = NL;
             getChar();
             printf("Next token is: -1, Next lexeme is EOF\n");
-            nextToken = NL;
             return nextToken;
+            break;
 
         /* Parentheses and operators */
         case UNKNOWN:
@@ -212,14 +215,14 @@ void stmt() {
     printf("Enter <stmt>\n");
     if (nextToken == IDENT) {
         lex();
-        if (nextToken != ASSIGN_OP) {
-            error();
-            return;
-        }
-        else {
+        if (nextToken == ASSIGN_OP) {
             lex();
             expr();
-            //if (something) return;
+            if (bool_start_over) return;
+        }
+        else {
+            error();
+            return;
         }
     }
     else {
@@ -238,13 +241,13 @@ void expr() {
     printf("Enter <expr>\n");
     /* Parse the first term */
     term();
-    // if (something) return;
+    if (bool_start_over) return;
     /* As long as the next token is + or -, get
     the next token and parse the next term */
-    while (nextToken == ADD_OP || nextToken == SUB_OP && charClass != NEWLINE) {
+    while ((nextToken == ADD_OP || nextToken == SUB_OP) && charClass != NEWLINE) {
         lex();
         term();
-        // if (something) return;
+        if (bool_start_over) return;
     }
     printf("Exit <expr>\n");
 } /* End of function expr */
@@ -257,13 +260,13 @@ void term() {
     printf("Enter <term>\n");
     /* Parse the first factor */
     factor();
-    // if (something) return;
+    if (bool_start_over) return;
     /* As long as the next token is * or /, get the
     next token and parse the next factor */
-    while (nextToken == MULT_OP || nextToken == DIV_OP && charClass != NEWLINE) {
+    while ((nextToken == MULT_OP || nextToken == DIV_OP) && charClass != NEWLINE) {
         lex();
         factor();
-        // if (something) return;
+        if (bool_start_over) return;
     }
     printf("Exit <term>\n");
 } /* End of function term */
@@ -287,13 +290,14 @@ void factor() {
         if (nextToken == LEFT_PAREN) {
             lex();
             expr();
-            // if (something) return;
+            if (bool_start_over) return;
             if (nextToken == RIGHT_PAREN){
                 lex();
             }
-            else
+            else {
                 error();
                 return;
+            }
         } /* End of if (nextToken == ... */
     /* It was not an id, an integer literal, or a left
     parenthesis */
@@ -306,7 +310,7 @@ void factor() {
 }
 
 void error(){
-    // set something
+    bool_start_over = 1;
     printf("Error\n");
     nextChar = getc(in_fp);
     while ((nextChar != '\n') && (charClass != EOF)){
