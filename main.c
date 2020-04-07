@@ -49,8 +49,16 @@ int main() {
     else {
         getChar();
         do {
-            lex();
-            stmt();
+            getNonBlankExcNl();
+            if (nextChar == '\n'){
+                printf("Next token is: -1, Next lexeme is EOF\n");
+                getChar();
+            }
+            else {
+                lex();
+                if (nextToken == EOF) break;
+                stmt();
+            }
         } while (nextToken != EOF);
     }
     return 0;
